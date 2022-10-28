@@ -1,0 +1,192 @@
+{% extends 'mainapplication/base.html' %}
+{% load static %}
+
+{% block title %}
+ААТП резка
+{% endblock %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'acl/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'aatp/css/main.css' %}">
+{% endblock %}
+{% block content %}
+
+<div id="main_form">
+    <div class="container">
+        <div class="left" style="width: 90%;">
+        <h2>Анализ аномалий технологических параметров резка</h2>
+        </div>
+    </div>
+    <hr class="st">
+    <p class="com">Входные данные</p>
+
+    <div class="input"></div>
+        <div class="container">
+        <div class="left" style="width: 30%;">
+            <p class="com text" name="text-periods" >Период:</p>
+        </div>
+        <div class="left">
+            <p class="com text" style="width: 100%" name="text-nomen" >Номенклатура:</p>
+        </div>
+        </div>
+
+        <div class="toggle-btn container" onclick="openInput()">
+            <span class="left_btn"></span>
+            <span class="left_btn"></span>
+        </div>
+
+        <div class="container" style="width: 90%; position:static; float: left;">
+            <div class="left" style="width: 30%; margin-right: 4%; margin-top: 40px; ">
+              <p id="label_startdt">Отбор</p>
+                    <label class="left" style="font-weight: lighter; font-size: 15px; width: 12%;" for="contactChoice1">Профиль</label>
+                    <input class="left" style="margin-top: 22px; margin-right: 20%; width: 20%; padding-right: 0;" type="radio" id="contactChoice1" name="concat" value="prof" onclick="onProfile()">
+                    <label class="left" style="font-weight: lighter; font-size: 15px; width: 6%;" for="contactChoice2">Дата</label>
+                    <input class="left" style="margin-top: 22px; width: 20%; padding-right: 0;" type="radio" id="contactChoice2" name="concat" value="date" onclick="onDate()">
+            </div>
+
+            <div class="left" style="width: 30%; margin-right: 0; margin-top: 40px; float: left;">
+                <p>Выбор даты</p>
+                <input style="margin-top: 10px; width: 100%; margin-bottom: 20px; padding-right: 0px;" type="date" 
+                class="custom-select" placeholder="Enter number" name="choice_dt" disabled="true" ><br>
+            </div>
+
+            <div class="left" style="width: 30%; margin-right: 0; margin-top: 40px; float: right;">
+              <p>Выбор профиля</p>
+              <select style="margin-top: 10px; margin-bottom: 20px;" name="choice_profile" class="custom-select" disabled="true">
+              </select>
+            </div>
+
+            <button type="submit" id="btn_date" class="btn btn-success" style="width: 100%;">Выбрать</button>
+            
+        </div>
+
+        <div class="container a1" style="width: 90%; position: static; float: left;">
+            <div id="table-wrapper">
+            <div id="table-scroll">
+            <table id="customers">
+                <thead>
+                    <tr>
+                        <th>Номенклатура</th>
+                        <th name="start">Начало</th>
+                        <th name="end">Окончание</th>
+                    </tr>
+                </thead>
+                <tbody>             
+                </tbody>                              
+              </table>
+            </div>
+            </div>
+        </div>
+
+        <p class="com">Масштабирование данных</p>
+        <div class="container" style="width: 90%; position: static; float: left;">
+            <div class="left" style="width: 20%; margin-right: 10%; margin-top: 40px; float: left; margin-left: 0;">
+                <p>Начальное время</p>
+                <input style="margin-top: 10px; width: 100%; margin-bottom: 20px; padding-right: 0px;" type="time" 
+                class="custom-select" placeholder="Enter number" name="choice_m_start"  value="00:00"><br>
+            </div>
+
+            <div class="left" style="width: 20%; margin-right: 0; margin-top: 40px; float: left;">
+              <p>Конечное время</p>
+              <input style="margin-top: 10px; width: 100%; margin-bottom: 20px; padding-right: 0px;" name="choice_m_stop" class="custom-select" type="time" value="23:59">
+            </div>
+
+            <div class="left" style="width: 30%; margin-right: 0; margin-top: 40px; float: right;">
+                <p>Выбор параметра</p>
+                <select style="margin-top: 10px; margin-bottom: 20px;" name="choice_param" class="custom-select">
+                  <option value="0">Средний Ток</option>
+                  <option value="1">Максимальный Ток</option>
+                  <option value="2">Средняя мощность</option>
+                  <option value="3">Максимальная мощность</option>
+                  <option value="4">Средняя вибрация</option>
+                  <option value="5">Максимальная вибрация</option>
+                  <option value="6">Паузы перед резами</option>
+                  <option value="7">Время цикла</option>
+                  <option value="8">Время реза</option>
+                  <option value="9">Скорость вращения диска</option>
+                  <option value="10">Диаметр диска</option>
+                </select>
+            </div>
+            <button type="submit" id="btn_generate_raport" class="btn btn-primary" style="width: 100%; margin-bottom: 30px;">Сформировать отчет</button>
+            <button type="submit" id="btn_generate_xlsx" class="btn btn-success" style="width: 100%;">Экспорт данных</button>
+        </div>
+
+        
+      
+</div>
+
+<div id="output_form">
+    
+    <p class="com">Графики по проходам</p>
+    <hr class="st" style="position: absolute; margin-top: 50px; width: 90%;">
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="legendBox">
+      <button id="green" onclick="toggleData(0)" class="item">Норма</button>
+      <button id="yellow" onclick="toggleData(1)" class="item">Ср отклонение</button>
+      <button id="red" onclick="toggleData(2)" class="item">Макс отклонение</button>
+
+      <!-- <div class="left" style="width: 5%; margin-left: 28%; margin-right: 50px; ">
+        <button style="font-size: 18px;">Норма</button>
+      </div>
+      <div class="left" style="width: 10%; margin-right: 50px;">
+        <button style="font-size: 18px;">Ср отклонение</button>
+      </div>
+      <div class="left" style="width: 10%;">
+        <button style="font-size: 18px;">Макс отклонение</button>
+      </div> -->
+    </div>
+    <div id="charts" class="container">
+      <div class="chart left p">
+        <canvas id="mychart"></canvas>
+      </div>
+      <div class="chart left p">
+        <canvas  id="mychart2"></canvas>
+      </div>
+      <div class="chart left p">
+        <canvas  id="mychart3"></canvas>
+      </div>
+      <div class="chart left p">
+        <canvas  id="mychart4"></canvas>
+      </div>
+      <div class="chart left p">
+        <canvas  id="mychart5"></canvas>
+      </div>
+    </div>
+    <p class="com">Уставки</p>
+    <hr class="st" style="position: relative; margin-top: 50px;">
+    <div class="container">
+      <div id="ust_ch" class="chart left">
+        <canvas id="ust_chart"></canvas>
+      </div>
+      <div class="left">
+          <table id="ustavki">
+              <thead>
+                  <tr>
+                      <th name="num_action">№</th>
+                      <th>Норма низ</th>
+                      <th>Норма верх</th>
+                      <th>Ср отклонение низ</th>
+                      <th>Ср отклонение верх</th>
+                  </tr>
+              </thead>
+              <tbody name="ustavki-body">   
+              </tbody>                              
+            </table>
+      </div>
+    </div>
+    <hr class="st" style="position: relative; margin-top: 50px; margin-bottom: 20px;">
+   
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'acl/js/chart.js' %}"></script>
+<script src="{% static 'aatp/js/chart-adapter.js' %}"></script>
+<script src="{% static 'aatp/js/chart-boxplot.js' %}"></script>
+
+<script src="{% static 'aatp/js/main.js' %}"></script>
+
+{% endblock %}

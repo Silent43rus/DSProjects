@@ -1,0 +1,148 @@
+{% extends 'mainapplication/base.html' %}
+{% load static %}
+{% block title %}
+Анализ правильных линий
+{% endblock %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'acl/css/main.css' %}">
+{% endblock %}
+{% block content %}
+
+<div id="main_form">
+    <div class="container">
+      <div class="left">
+        <h2>Аналитика линий правки</h2>
+      </div>
+    </div>
+    <hr class="st">
+    <p class="com">Входные данные</p>
+    
+  <div class="input"></div>
+    <div class="container">
+      <div class="left" style="width: 30%;">
+        <p class="com text" name="text-periods" >Период:</p>
+      </div>
+      <div class="left">
+        <p class="com text" style="width: 100%" name="text-nomen" >Номенклатура:</p>
+      </div>
+    </div>
+    
+    <div class="toggle-btn container" onclick="openInput()">
+      <span class="left_btn"></span>
+      <span class="left_btn"></span>
+    </div>
+
+    <!-- Выезжающая форма ввода данных -->
+    <div class="container" style="width: 65%; position:static; float: left;">
+      <div class="left" style="width: 30%; margin-right: 4%; margin-top: 40px; ">
+        <p id="label_startdt">Выберите начальную дату</p>
+        <input style="margin-top: 10px;  padding-right: 0;" type="datetime-local" class="custom-select" placeholder="Enter number" name="start_dt">
+      </div>
+      <div class="left" style="width: 30%; margin-right: 0; margin-top: 40px; float: left;">
+        <p>Выберите конечную дату</p>
+        <input style="margin-top: 10px; margin-bottom: 20px; padding-right: 0px;" type="datetime-local" class="custom-select" placeholder="Enter number" name="stop_dt"><br>
+      </div>
+      <div class="left" style="width: 30%; margin-right: 0; margin-top: 40px; float: right;">
+        <p>Выберите линию правки</p>
+        <select style="margin-top: 10px; margin-bottom: 20px;" name="select_line" class="custom-select">
+          <option>1 линия</option>
+          <option>2 линия</option>
+          <option>3 линия</option>
+        </select>
+      </div>
+      <button type="submit" id="btn_date" class="btn btn-success" style="width: 100%;">Выбрать</button>
+    </div>
+
+    <div class="container" style="width: 20%; position:static; float: left; margin-left: 5%;">
+      <div class="left" style="width: 100%; margin-right: 80px; margin-top: 40px;">
+        <p>Выберите период &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</p>
+        <select style="margin-top: 10px; margin-bottom: 20px;" name="select_period" class="custom-select">
+        </select>
+      </div>
+      <button type="submit" id="btn_periods" class="btn btn-success" style="width: 100%;">Выбрать</button>
+    </div>
+
+    <div class="container" style="width: 90%; position: static; float: left; ">
+      <div class="left" style="width: 100%; text-align: center; margin-right: 80px; margin-top: 40px;">
+        <p>Выберите номенклатуру</p>
+        <select style="margin-top: 10px; margin-bottom: 20px;" name="select_nomen" class="custom-select">
+        </select>
+      </div>
+      <button type="submit" id="btn_report" class="btn btn-primary" style="width: 100%; margin-bottom: 0;">Сформировать отчет</button>
+    </div>
+    
+  </div>
+
+  <div style="margin-top: 420px;" id="output_form">
+    <p class="com" style=" margin-bottom: 5px;" >Статистика</p><br>
+    <hr class="st" style=" margin-top: 35px; margin-bottom: 10px;">
+    <table id="customers">
+      <tr>
+        <th rowspan="2">Общие данные</th>
+        <th>Количество заготовок</th>
+        <th>Количество воздействий</th>
+        <th>Общая точность воздействий</th>
+      </tr>
+      <tr>
+        <td name="count_bar">0</td>
+        <td name="count_actions">0</td>
+        <td name="accuracy">0</td>
+      </tr>
+      <tr>
+        <th rowspan="2">Положительные воздействия</th>
+        <th>Перегнули воздействиями</th>
+        <th>Недогнули воздействиями</th>
+        <th>Общая точность положительных</th>
+      </tr>
+      <tr>
+        <td name="pos_overfill">0</td>
+        <td name="pos_underfill">0</td>
+        <td name="pos_accuracy">0</td>
+      </tr>
+      <tr>
+        <th rowspan="2">Отрицательные воздействия</th>
+        <th>Перегнули воздействиями</th>
+        <th>Недогнули воздействиями</th>
+        <th>Общая точность отрицательных</th>
+      </tr>
+      <tr>
+        <td name="neg_overfill">0</td>
+        <td name="neg_underfill">0</td>
+        <td name="neg_accuracy">0</td>
+      </tr>
+    </table>
+    <p class="com">Графики</p>
+    <hr class="st" style="margin-top: 50px;">
+    <div class="container">
+      <div class="chart left">
+        <canvas  id="mychart"></canvas>
+      </div>
+      <div class="chart left">
+        <canvas  id="mychart2"></canvas>
+      </div>
+    </div>
+    <div class="container">
+      <div class="chart left">
+        <canvas  id="mychart3"></canvas>
+      </div>
+      <div class="chart left">
+        <canvas  id="mychart4"></canvas>
+      </div>
+    </div>
+    <div class="container">
+      <div class="chart left">
+        <canvas  id="mychart5"></canvas>
+      </div>
+      <div class="chart left">
+        <canvas  id="mychart6"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'acl/js/chart.js' %}"></script>
+<script src="{% static 'acl/js/main.js' %}"></script>
+{% endblock %}
